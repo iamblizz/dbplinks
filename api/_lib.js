@@ -1,5 +1,5 @@
-const H=()=>({apikey:process.env.SUPABASE_ANON_KEY,Authorization:"Bearer "+process.env.SUPABASE_ANON_KEY});
-export const brand=()=>process.env.BRAND_NAME||"StackMuz Links";
+const H=()=>({apikey:process.env.SUPABASE_ANON_KEY});
+export const brand=()=>process.env.BRAND_NAME||"DBP Links";
 export async function getLink(slug){
   if(!/^[a-z0-9-]{2,60}$/.test(slug))return null;
   const r=await fetch(`${process.env.SUPABASE_URL}/rest/v1/links?slug=eq.${slug}&select=*`,{headers:H()});
