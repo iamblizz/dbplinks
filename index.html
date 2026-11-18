@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>One link for every release</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>*{box-sizing:border-box}body{margin:0;background:#f2f3f5;color:#12131a;font:17px/1.55 Figtree,system-ui,sans-serif}
+.w{max-width:1000px;margin:0 auto;padding:28px 22px 60px}.top{display:flex;justify-content:space-between;align-items:center;font:700 20px "Bricolage Grotesque",sans-serif}
+.top a{font:600 15px Figtree,sans-serif;color:#12131a}
+.hero{display:grid;gap:36px;align-items:center;padding:48px 0}@media(min-width:860px){.hero{grid-template-columns:1.1fr .9fr}}
+h1{font:700 clamp(40px,7vw,68px)/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;margin:0 0 18px}
+p.l{max-width:480px;color:#4a4d5c;margin:0 0 26px}.btn{display:inline-block;background:#5b3df5;color:#fff;text-decoration:none;font-weight:600;padding:14px 24px;border-radius:999px}
+.btn:focus-visible{outline:2px solid #12131a;outline-offset:3px}
+iframe{width:100%;max-width:340px;height:600px;border:0;border-radius:28px;box-shadow:0 30px 70px rgba(18,19,26,.28);justify-self:center;background:#0e0d12}
+ul{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:22px}@media(min-width:760px){ul{grid-template-columns:repeat(3,1fr)}}
+li b{display:block;font:700 19px "Bricolage Grotesque",sans-serif;margin-bottom:4px}li{color:#4a4d5c;border-top:2px solid #12131a;padding-top:14px}</style></head>
+<body><div class="w"><div class="top"><span id="b">Smart links</span><a href="/app">Sign in</a></div>
+<section class="hero"><div><h1>One link for every release.</h1><p class="l">Send fans to Spotify, Apple Music, Audiomack, Boomplay and more from a single page. See who clicked and where in the world they are.</p><a class="btn" href="/app">Create your first link</a></div>
+<iframe id="d" title="Example release page"></iframe></section>
+<ul><li><b>Made for covers</b>Your artwork leads. The page takes its colours from your release.</li><li><b>Know your fans</b>Views, clicks per platform and top countries for every link.</li><li><b>Built for ads</b>Add your Meta Pixel and retarget everyone who visited.</li></ul></div>
+<script type="module">import {renderPage} from "/render.js";
+let brand="StackMuz Links";try{const c=await(await fetch("/api/config")).json();brand=c.brand||brand}catch{}
+document.getElementById("b").textContent=brand;
+document.getElementById("d").srcdoc=renderPage({artist:"Your Artist",title:"Your New Single",kind:"Single",color:"#5b3df5",platforms:{spotify:"#",apple:"#",audiomack:"#",boomplay:"#",youtubemusic:"#"}},{preview:true,brand});</script></body></html>

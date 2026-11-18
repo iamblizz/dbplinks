@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--ink:#12131a;--mu:#6c7080;--chalk:#f2f3f5;--ln:#dfe1e8;--ac:#5b3df5;--ok:#13a56b}
+*{box-sizing:border-box}body{margin:0;background:var(--chalk);color:var(--ink);font:16px/1.5 Figtree,system-ui,sans-serif}
+h1,.disp{font-family:"Bricolage Grotesque",Figtree,sans-serif;letter-spacing:-.02em;font-weight:700}
+a{color:inherit}:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid var(--ln);position:sticky;top:0;z-index:5}
+.logo{font:700 19px "Bricolage Grotesque",sans-serif;text-decoration:none}.tr{display:flex;gap:8px}
+.wrap{max-width:960px;margin:0 auto;padding:28px 20px 90px}
+.btn{font:600 15px Figtree,sans-serif;border:1px solid var(--ln);background:#fff;color:var(--ink);padding:10px 18px;border-radius:999px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.p{background:var(--ac);border-color:var(--ac);color:#fff}.btn.g{background:transparent}
+h1{font-size:32px;line-height:1.1;margin:0 0 6px}.mu{color:var(--mu);margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);margin:26px 0;border-top:2px solid var(--ink)}
+.stats div{padding:14px 16px 0 0}.stats div+div{padding-left:16px;border-left:1px solid var(--ln)}
+.num{font:700 clamp(28px,6vw,44px)/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em}.lab{color:var(--mu);font-size:14px}
+h2{font-size:18px;margin:34px 0 12px}
+.row{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--ln);text-decoration:none}
+.row:hover .t{text-decoration:underline}
+.cover{width:72px;height:72px;border-radius:4px;background-size:cover;background-position:center;box-shadow:0 6px 16px rgba(18,19,26,.18)}
+.cover.big{width:124px;height:124px}.t{font-weight:600}.sm{font-size:14px;color:var(--mu)}
+.rs{text-align:right;font-size:14px;color:var(--mu)}.rs b{display:block;color:var(--ink);font-size:18px}
+.st{font-size:13px;font-weight:600}.st.live{color:var(--ok)}.st.draft{color:var(--mu)}
+.head{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;margin:14px 0}.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.back{font-size:14px;color:var(--mu)}.url{font-size:14px;color:var(--mu);word-break:break-all;margin:2px 0}
+.bar{display:grid;grid-template-columns:130px 1fr 44px;gap:10px;align-items:center;margin:8px 0;font-size:15px}
+.bar i{display:block;height:10px;border-radius:5px;background:var(--ac)}.bar span:last-child{text-align:right;color:var(--mu)}
+.two{display:grid;gap:30px}@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+.empty{border:2px dashed var(--ln);border-radius:16px;padding:40px 20px;text-align:center;margin-top:20px}
+.auth{display:grid;gap:36px;max-width:900px;margin:0 auto;padding:60px 20px}@media(min-width:800px){.auth{grid-template-columns:1.2fr 1fr;align-items:center}}
+.auth h1{font-size:clamp(38px,7vw,60px);line-height:1}
+label{display:block;font-size:14px;font-weight:600;margin:14px 0 5px}
+input,select{width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;background:#fff;font:inherit;color:var(--ink)}
+input[type=color]{width:64px;height:44px;padding:3px}.err{color:#c62828;font-size:14px;min-height:20px}
+.ed{display:grid;gap:30px}@media(min-width:900px){.ed{grid-template-columns:1fr 340px;align-items:start}.pvw{position:sticky;top:80px}}
+.sec{background:#fff;border:1px solid var(--ln);border-radius:14px;padding:6px 18px 18px;margin-bottom:14px}.sec h2{margin:16px 0 0}
+.pre{display:flex;align-items:center;border:1px solid var(--ln);border-radius:10px;background:#fff;overflow:hidden}.pre span{padding:0 0 0 12px;color:var(--mu);white-space:nowrap;font-size:14px}.pre input{border:0}
+.seg{display:inline-flex;border:1px solid var(--ln);border-radius:999px;overflow:hidden}.seg button{border:0;background:#fff;padding:9px 18px;font:600 14px Figtree;cursor:pointer}.seg .on{background:var(--ink);color:#fff}
+iframe{width:100%;height:600px;border:0;border-radius:24px;background:#0e0d12;box-shadow:0 20px 50px rgba(18,19,26,.25)}
+.savebar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--ln);padding:12px 20px;display:flex;gap:8px;justify-content:flex-end;z-index:6}
+#toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}#toast.on{opacity:1}
+</style></head><body><div id="app"></div><div id="toast" role="status"></div>
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+import {renderPage,PLATS} from "/render.js";
+const $=(s,r=document)=>r.querySelector(s),app=$("#app");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let sb,user,links=[],ev=[],brand="StackMuz Links",ready=false;
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2200)};
+const bg=l=>l.art_url?`background-image:url("${esc(l.art_url)}")`:`background:linear-gradient(135deg,${esc(l.color||"#5b3df5")},#1b1530)`;
+const shell=c=>`<header class="top"><a class="logo" href="#/">${esc(brand)}</a><div class="tr"><a class="btn p" href="#/new">New link</a><button class="btn g" id="out">Sign out</button></div></header><main class="wrap">${c}</main>`;
+const bindShell=()=>{const o=$("#out");if(o)o.onclick=()=>sb.auth.signOut();document.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{navigator.clipboard.writeText(b.dataset.copy);toast("Link copied")})};
+
+(async()=>{
+ let c;try{c=await(await fetch("/api/config")).json()}catch{}
+ if(!c||!c.url){app.innerHTML=`<div class="auth"><div><h1>Setup needed</h1><p class="mu">Add SUPABASE_URL and SUPABASE_ANON_KEY in your Vercel project settings, then redeploy.</p></div></div>`;return}
+ brand=c.brand||brand;document.title=brand;sb=createClient(c.url,c.key);
+ const{data}=await sb.auth.getSession();user=data.session?.user||null;
+ sb.auth.onAuthStateChange((_,s)=>{const n=s?.user||null;if((n?.id)!==(user?.id)){user=n;boot()}});
+ boot();addEventListener("hashchange",()=>ready&&route());
+})();
+
+async function boot(){ready=false;if(!user)return authView();
+ const[a,b]=await Promise.all([sb.from("links").select("*").eq("user_id",user.id).order("created_at",{ascending:false}),
+  sb.from("events").select("link_id,type,platform,country,device,created_at").gte("created_at",new Date(Date.now()-30*864e5).toISOString()).limit(10000)]);
+ links=a.data||[];ev=b.data||[];ready=true;route()}
+function route(){const h=location.hash.split("/");const l=links.find(x=>x.id===h[2]);
+ if(h[1]==="new")return editor();if(h[1]==="edit"&&l)return editor(l);if(h[1]==="l"&&l)return detail(l);home()}
+
+function authView(mode="in",msg=""){
+ app.innerHTML=`<div class="auth"><div><h1>Your release, one link.</h1><p class="mu" style="max-width:440px;font-size:18px">Send fans to every streaming platform from one page, and see who clicked and where they are.</p></div>
+ <form id="f"><label for="e">Email</label><input id="e" type="email" autocomplete="email" required><label for="p">Password</label><input id="p" type="password" minlength="6" autocomplete="${mode==="in"?"current-password":"new-password"}" required>
+ <p class="err" role="alert">${esc(msg)}</p><button class="btn p" style="width:100%">${mode==="in"?"Sign in":"Create account"}</button>
+ <p style="text-align:center"><button type="button" class="btn g" id="sw" style="border:0">${mode==="in"?"New here? Create an account":"Have an account? Sign in"}</button></p></form></div>`;
+ $("#sw").onclick=()=>authView(mode==="in"?"up":"in");
+ $("#f").onsubmit=async e=>{e.preventDefault();const cred={email:$("#e").value,password:$("#p").value};
+  const{error,data}=mode==="in"?await sb.auth.signInWithPassword(cred):await sb.auth.signUp(cred);
+  if(error)authView(mode,error.message);else if(mode==="up"&&!data.session)authView("in","Check your email to confirm your account, then sign in.")}}
+
+const day=n=>new Date(Date.now()-n*864e5).toISOString().slice(0,10);
+function agg(id){const e=id?ev.filter(x=>x.link_id===id):ev,a={views:0,clicks:0,day:{},plat:{},ctry:{},dev:{}};
+ e.forEach(x=>{if(x.type==="view"){a.views++;const d=x.created_at.slice(0,10);a.day[d]=(a.day[d]||0)+1;if(x.country)a.ctry[x.country]=(a.ctry[x.country]||0)+1;if(x.device)a.dev[x.device]=(a.dev[x.device]||0)+1}
+  else{a.clicks++;a.plat[x.platform]=(a.plat[x.platform]||0)+1}});return a}
+const rate=a=>a.views?Math.round(a.clicks/a.views*100)+"%":"–";
+const strip=a=>`<div class="stats"><div><div class="num">${a.views.toLocaleString()}</div><div class="lab">Page views</div></div><div><div class="num">${a.clicks.toLocaleString()}</div><div class="lab">Streaming clicks</div></div><div><div class="num">${rate(a)}</div><div class="lab">Click rate</div></div></div>`;
+function chart(a){const k=[...Array(30)].map((_,i)=>day(29-i)),v=k.map(x=>a.day[x]||0),m=Math.max(1,...v);
+ return `<svg viewBox="0 0 600 120" width="100%" role="img" aria-label="Page views per day, last 30 days">${v.map((n,i)=>`<rect x="${i*20+2}" y="${116-n/m*108}" width="16" height="${Math.max(3,n/m*108)}" rx="3" fill="${n===m&&n>0?"var(--ac)":"#d3d6e0"}"><title>${k[i]}: ${n} views</title></rect>`).join("")}</svg>`}
+const bars=(o,fmt=x=>x)=>{const e=Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,6),m=e.length?e[0][1]:1;
+ return e.length?e.map(([n,c])=>`<div class="bar"><span>${esc(fmt(n))}</span><span><i style="width:${Math.max(4,c/m*100)}%"></i></span><span>${c}</span></div>`).join(""):'<p class="mu">Nothing yet. Share your link to start seeing data.</p>'};
+const country=c=>{try{return new Intl.DisplayNames(["en"],{type:"region"}).of(c)}catch{return c}};
+
+function home(){const a=agg();
+ app.innerHTML=shell(`<h1>Your links</h1><p class="mu">Last 30 days</p>${strip(a)}<h2 class="disp">Page views per day</h2>${chart(a)}<h2 class="disp">Releases</h2>`+
+ (links.length?links.map(l=>{const s=agg(l.id);return `<a class="row" href="#/l/${l.id}"><div class="cover" style='${bg(l)}'></div><div><div class="t">${esc(l.title)}</div><div class="sm">${esc(l.artist)}</div><div class="st ${l.published?"live":"draft"}">${l.published?"Live":"Draft"}</div></div><div class="rs"><b>${s.views}</b>views, ${s.clicks} clicks</div></a>`}).join("")
+ :`<div class="empty"><h1 style="font-size:24px">Make your first link</h1><p class="mu">Add a cover, paste your streaming links, and share one address.</p><a class="btn p" href="#/new">Create a link</a></div>`));bindShell()}
+
+function detail(l){const a=agg(l.id),u=location.origin+"/"+l.slug;
+ app.innerHTML=shell(`<a class="back" href="#/">All links</a><div class="head"><div class="cover big" style='${bg(l)}'></div><div><h1>${esc(l.title)}</h1><p class="mu">${esc(l.artist)}</p><p class="url">${esc(u)}</p>
+ <div class="acts"><button class="btn p" data-copy="${esc(u)}">Copy link</button><a class="btn g" href="#/edit/${l.id}">Edit</a>${l.published?`<a class="btn g" target="_blank" rel="noopener" href="/${l.slug}">Open page</a>`:`<span class="st draft" style="align-self:center">Draft, not public</span>`}</div></div></div>`+
+ strip(a)+`<h2 class="disp">Page views per day</h2>${chart(a)}<div class="two"><div><h2 class="disp">Where fans click</h2>${bars(a.plat,k=>PLATS[k]?PLATS[k][0]:k)}</div><div><h2 class="disp">Top countries</h2>${bars(a.ctry,country)}</div></div><h2 class="disp">Devices</h2>${bars(a.dev,x=>x[0].toUpperCase()+x.slice(1))}`);bindShell()}
+
+const slugify=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60);
+function editor(l){const isNew=!l;let blob=null,touched=!isNew;
+ const d=l?{...l,platforms:{...l.platforms}}:{artist:"",title:"",kind:"Single",release_date:"",slug:"",color:"#5b3df5",pixel_id:"",art_url:"",platforms:{},published:true};
+ app.innerHTML=shell(`<a class="back" href="#/">All links</a><h1 style="margin-top:8px">${isNew?"New link":"Edit link"}</h1><div class="ed"><div>
+ <div class="sec"><h2 class="disp">Release</h2><label for="artist">Artist</label><input id="artist" data-f="artist" value="${esc(d.artist)}"><label for="title">Title</label><input id="title" data-f="title" value="${esc(d.title)}">
+ <label for="kind">Type</label><select id="kind" data-f="kind">${["Single","EP","Album","Mixtape"].map(k=>`<option${k===d.kind?" selected":""}>${k}</option>`).join("")}</select>
+ <label for="rd">Release date (optional)</label><input id="rd" type="date" data-f="release_date" value="${esc(d.release_date||"")}"></div>
+ <div class="sec"><h2 class="disp">Cover and address</h2><label for="art">Cover art (square works best)</label><input id="art" type="file" accept="image/*">
+ <label for="slug">Link address</label><div class="pre"><span>${esc(location.host)}/</span><input id="slug" data-f="slug" value="${esc(d.slug)}" placeholder="artist-song" autocapitalize="none"></div>
+ <label for="color">Accent colour</label><input id="color" type="color" data-f="color" value="${esc(d.color||"#5b3df5")}"></div>
+ <div class="sec"><h2 class="disp">Streaming links</h2>${Object.entries(PLATS).map(([k,p])=>`<label for="p_${k}">${p[0]}</label><input id="p_${k}" type="url" data-p="${k}" placeholder="https://" value="${esc(d.platforms[k])}">`).join("")}</div>
+ <div class="sec"><h2 class="disp">Tracking</h2><label for="px">Meta Pixel ID (optional)</label><input id="px" data-f="pixel_id" inputmode="numeric" value="${esc(d.pixel_id)}"></div>
+ <div class="sec"><h2 class="disp">Visibility</h2><div class="seg" role="group" aria-label="Visibility"><button type="button" data-s="1" class="${d.published?"on":""}">Live</button><button type="button" data-s="0" class="${d.published?"":"on"}">Draft</button></div></div>
+ <p class="err" id="er" role="alert"></p></div><div class="pvw"><iframe id="pv" title="Live preview"></iframe></div></div>
+ <div class="savebar"><a class="btn g" href="#/">Cancel</a><button class="btn p" id="save">Save link</button></div>`);
+ bindShell();const paint=()=>{$("#pv").srcdoc=renderPage(d,{preview:true,brand})};
+ app.querySelectorAll("[data-f]").forEach(i=>i.oninput=()=>{d[i.dataset.f]=i.value;
+  if(i.id==="slug")touched=true;else if(!touched&&(i.id==="artist"||i.id==="title")){d.slug=slugify(d.artist+" "+d.title);$("#slug").value=d.slug}paint()});
+ app.querySelectorAll("[data-p]").forEach(i=>i.oninput=()=>{d.platforms[i.dataset.p]=i.value.trim();paint()});
+ app.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{d.published=b.dataset.s==="1";app.querySelectorAll("[data-s]").forEach(x=>x.classList.toggle("on",x===b))});
+ $("#art").onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image(),u=URL.createObjectURL(f);
+  im.onload=async()=>{const s=Math.min(im.width,im.height),c=document.createElement("canvas");c.width=c.height=1000;
+   c.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,1000,1000);
+   d.art_url=c.toDataURL("image/jpeg",.86);blob=await(await fetch(d.art_url)).blob();URL.revokeObjectURL(u);paint()};im.src=u};
+ $("#save").onclick=async()=>{const er=$("#er");er.textContent="";const b=$("#save");b.disabled=true;
+  try{if(!d.artist.trim()||!d.title.trim())throw Error("Add an artist and a title.");
+   if(!/^[a-z0-9-]{2,60}$/.test(d.slug))throw Error("Link address needs 2 to 60 lowercase letters, numbers or dashes.");
+   let art=d.art_url||null;
+   if(blob){const p=`${user.id}/${Date.now()}.jpg`,{error}=await sb.storage.from("art").upload(p,blob,{contentType:"image/jpeg"});if(error)throw error;art=sb.storage.from("art").getPublicUrl(p).data.publicUrl}
+   const pl={};Object.entries(d.platforms).forEach(([k,v])=>{if(/^https?:\/\//i.test(v||""))pl[k]=v});
+   const row={artist:d.artist.trim(),title:d.title.trim(),kind:d.kind,release_date:d.release_date||null,slug:d.slug,color:d.color,pixel_id:String(d.pixel_id||"").replace(/\D/g,"")||null,art_url:art,platforms:pl,published:d.published};
+   const{data,error}=isNew?await sb.from("links").insert(row).select().single():await sb.from("links").update(row).eq("id",l.id).select().single();
+   if(error)throw Error(error.code==="23505"?"That address is taken. Try another.":error.message);
+   toast("Link saved");await boot();location.hash="#/l/"+data.id}
+  catch(e){er.textContent=e.message;b.disabled=false;scrollTo({top:document.body.scrollHeight})}};
+ paint()}
+</script></body></html>

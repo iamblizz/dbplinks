@@ -1,0 +1,5 @@
+{"rewrites":[
+{"source":"/app","destination":"/app.html"},
+{"source":"/go/:slug/:platform","destination":"/api/go?slug=:slug&platform=:platform"},
+{"source":"/:slug","destination":"/api/link?slug=:slug"}
+]}
