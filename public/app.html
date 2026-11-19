@@ -44,7 +44,7 @@ import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2
 import {renderPage,PLATS} from "/render.js";
 const $=(s,r=document)=>r.querySelector(s),app=$("#app");
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let sb,user,links=[],ev=[],brand="StackMuz Links",ready=false;
+let sb,user,links=[],ev=[],brand="StackMuz Links",ready=false,go=false,recovery=/type=recovery/.test(location.hash),linkErr=/error_code=/.test(location.hash);
 const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),2200)};
 const bg=l=>l.art_url?`background-image:url("${esc(l.art_url)}")`:`background:linear-gradient(135deg,${esc(l.color||"#5b3df5")},#1b1530)`;
 const shell=c=>`<header class="top"><a class="logo" href="#/">${esc(brand)}</a><div class="tr"><a class="btn p" href="#/new">New link</a><button class="btn g" id="out">Sign out</button></div></header><main class="wrap">${c}</main>`;
@@ -54,9 +54,13 @@ const bindShell=()=>{const o=$("#out");if(o)o.onclick=()=>sb.auth.signOut();docu
  let c;try{c=await(await fetch("/api/config")).json()}catch{}
  if(!c||!c.url){app.innerHTML=`<div class="auth"><div><h1>Setup needed</h1><p class="mu">Add SUPABASE_URL and SUPABASE_ANON_KEY in your Vercel project settings, then redeploy.</p></div></div>`;return}
  brand=c.brand||brand;document.title=brand;sb=createClient(c.url,c.key);
- const{data}=await sb.auth.getSession();user=data.session?.user||null;
- sb.auth.onAuthStateChange((_,s)=>{const n=s?.user||null;if((n?.id)!==(user?.id)){user=n;boot()}});
- boot();addEventListener("hashchange",()=>ready&&route());
+ sb.auth.onAuthStateChange((_,s)=>{if(recovery||!go)return;const n=s?.user||null;if((n?.id)!==(user?.id)){user=n;boot()}});
+ const{data}=await sb.auth.getSession();user=data.session?.user||null;go=true;
+ addEventListener("hashchange",()=>ready&&route());
+ if(recovery&&user)return newPass();
+ recovery=false;
+ if(linkErr)return authView("in","That reset link has expired. Tap Forgot password to get a new one.");
+ boot();
 })();
 
 async function boot(){ready=false;if(!user)return authView();
@@ -70,11 +74,33 @@ function authView(mode="in",msg=""){
  app.innerHTML=`<div class="auth"><div><h1>Your release, one link.</h1><p class="mu" style="max-width:440px;font-size:18px">Send fans to every streaming platform from one page, and see who clicked and where they are.</p></div>
  <form id="f"><label for="e">Email</label><input id="e" type="email" autocomplete="email" required><label for="p">Password</label><input id="p" type="password" minlength="6" autocomplete="${mode==="in"?"current-password":"new-password"}" required>
  <p class="err" role="alert">${esc(msg)}</p><button class="btn p" style="width:100%">${mode==="in"?"Sign in":"Create account"}</button>
- <p style="text-align:center"><button type="button" class="btn g" id="sw" style="border:0">${mode==="in"?"New here? Create an account":"Have an account? Sign in"}</button></p></form></div>`;
+ ${mode==="in"?'<p style="text-align:center;margin:4px 0 0"><button type="button" class="btn g" id="fg" style="border:0;font-size:14px">Forgot password?</button></p>':""}<p style="text-align:center"><button type="button" class="btn g" id="sw" style="border:0">${mode==="in"?"New here? Create an account":"Have an account? Sign in"}</button></p></form></div>`;
  $("#sw").onclick=()=>authView(mode==="in"?"up":"in");
+ if($("#fg"))$("#fg").onclick=()=>forgot();
  $("#f").onsubmit=async e=>{e.preventDefault();const cred={email:$("#e").value,password:$("#p").value};
   const{error,data}=mode==="in"?await sb.auth.signInWithPassword(cred):await sb.auth.signUp(cred);
   if(error)authView(mode,error.message);else if(mode==="up"&&!data.session)authView("in","Check your email to confirm your account, then sign in.")}}
+
+function forgot(msg="",ok=false){
+ app.innerHTML=`<div class="auth"><div><h1>Reset your password</h1><p class="mu" style="max-width:440px;font-size:18px">Enter your email and we’ll send you a link to choose a new one.</p></div>
+ <form id="f"><label for="e">Email</label><input id="e" type="email" autocomplete="email" required>
+ <p class="${ok?"mu":"err"}" role="alert">${esc(msg)}</p><button class="btn p" style="width:100%">Send reset link</button>
+ <p style="text-align:center"><button type="button" class="btn g" id="bk" style="border:0">Back to sign in</button></p></form></div>`;
+ $("#bk").onclick=()=>authView();
+ $("#f").onsubmit=async e=>{e.preventDefault();$("#f .p").disabled=true;
+  const{error}=await sb.auth.resetPasswordForEmail($("#e").value.trim(),{redirectTo:location.origin+"/app"});
+  error?forgot(error.message):forgot("If an account exists for that email, a reset link is on its way. Check your spam folder too.",true)}}
+
+function newPass(msg=""){
+ app.innerHTML=`<div class="auth"><div><h1>Choose a new password</h1><p class="mu" style="max-width:440px;font-size:18px">Pick one you haven’t used before. At least 6 characters.</p></div>
+ <form id="f"><label for="p1">New password</label><input id="p1" type="password" minlength="6" autocomplete="new-password" required>
+ <label for="p2">Repeat password</label><input id="p2" type="password" minlength="6" autocomplete="new-password" required>
+ <p class="err" role="alert">${esc(msg)}</p><button class="btn p" style="width:100%">Save new password</button></form></div>`;
+ $("#f").onsubmit=async e=>{e.preventDefault();
+  if($("#p1").value!==$("#p2").value)return newPass("The two passwords don’t match.");
+  const{error}=await sb.auth.updateUser({password:$("#p1").value});
+  if(error)return newPass(error.message);
+  recovery=false;history.replaceState(null,"",location.pathname);toast("Password updated");boot()}}
 
 const day=n=>new Date(Date.now()-n*864e5).toISOString().slice(0,10);
 function agg(id){const e=id?ev.filter(x=>x.link_id===id):ev,a={views:0,clicks:0,day:{},plat:{},ctry:{},dev:{}};
